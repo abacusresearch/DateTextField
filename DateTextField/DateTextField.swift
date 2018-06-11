@@ -19,6 +19,7 @@ public class DateTextField: UITextField {
     case monthYear = "MM'$'yyyy"
     case dayMonthYear = "dd'*'MM'$'yyyy"
     case monthDayYear = "MM'$'dd'*'yyyy"
+    case hourMinute = "HH'$'mm"
   }
   
   // MARK: - Properties
@@ -26,7 +27,7 @@ public class DateTextField: UITextField {
   
   /// The order for which the date segments appear. e.g. "day/month/year", "month/day/year", "month/year"
   /// **Default:** `Format.dayMonthYear`
-  public var dateFormat = Format.dayMonthYear
+  public var dateFormat:Format = Format.dayMonthYear
   
   /// The symbol you wish to use to separate each date segment. e.g. "01 - 01 - 2012", "01 / 03 / 2019"
   /// **Default:** `" / "`
@@ -103,7 +104,7 @@ extension DateTextField: UITextFieldDelegate {
     guard let numbersOnly = numberOnlyString(with: emojiFreeString) else {
       return false
     }
-    let forceEndGroup = replacedString.hasSuffix(".")
+    let forceEndGroup = replacedString.hasSuffix(separator)
     switch dateFormat {
     case .monthYear:
       guard numbersOnly.count <= 6 else { return false }
@@ -125,6 +126,12 @@ extension DateTextField: UITextFieldDelegate {
       let month = splitString.count > 0 ? splitString[0] : ""
       let year = splitString.count > 2 ? splitString[2] : ""
       textField.text = final(day: day, month: month, year: year, force: forceEndGroup)
+    case .hourMinute:
+      guard numbersOnly.count <= 4 else { return false }
+      let splitString = split(string: numbersOnly, format: [2, 2])
+      let hour = splitString.count > 0 ? splitString[0] : ""
+      let minute = splitString.count > 1 ? splitString[1] : ""
+      textField.text = finalHour(hour: hour, minute: minute, force: forceEndGroup)
     }
     customDelegate?.dateDidChange(dateTextField: self)
     return false
@@ -213,6 +220,44 @@ extension DateTextField: UITextFieldDelegate {
     return dateString.replacingOccurrences(of: "'", with: "")
   }
   
+  func finalHour(hour: String, minute: String, force: Bool) -> String {
+    var dateString = dateFormat.rawValue
+    var aMinute = minute
+    var aHour = hour
+    var aForce = force
+
+    if aHour.count >= 2 {
+      if (aMinute > "5") {
+        aMinute = "0" + aMinute
+      }
+      dateString = dateString.replacingOccurrences(of: "mm", with: aMinute)
+      dateString = dateString.replacingOccurrences(of: "HH", with: aHour)
+      dateString = dateString.replacingOccurrences(of: "$", with: separator)
+    } else {
+      dateString = dateString.replacingOccurrences(of: "mm", with: aMinute)
+      if (aHour > "2") {
+        aHour = "0" + aHour
+        dateString = dateString.replacingOccurrences(of: "HH", with: aHour)
+        dateString = dateString.replacingOccurrences(of: "$", with: separator)
+      }
+      else {
+        if (aForce) {
+          if (aHour.count == 1) {
+            aHour = "0" + aHour
+          }
+          dateString = dateString.replacingOccurrences(of: "HH", with: aHour)
+          dateString = dateString.replacingOccurrences(of: "$", with: separator)
+          aForce = false
+        }
+        else {
+          dateString = dateString.replacingOccurrences(of: "HH", with: aHour)
+          dateString = dateString.replacingOccurrences(of: "$", with: "")
+        }
+      }
+    }
+    
+    return dateString.replacingOccurrences(of: "'", with: "")
+  }
 }
 
 // MARK: - String Extension
@@ -244,4 +289,27 @@ extension Character {
     return Character(UnicodeScalar(UInt32(0x1d000))!) <= self && self <= Character(UnicodeScalar(UInt32(0x1f77f))!)
       || Character(UnicodeScalar(UInt32(0x2100))!) <= self && self <= Character(UnicodeScalar(UInt32(0x26ff))!)
   }
+}
+
+
+
+
+
+
+
+
+
+
+
+public class HourTextField: DateTextField {
+
+  override public var dateFormat: Format {
+    get {
+      return Format.hourMinute
+    }
+    set {
+      
+    }
+  }
+
 }
