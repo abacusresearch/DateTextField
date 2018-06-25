@@ -246,6 +246,12 @@ extension DateTextField: UITextFieldDelegate {
       if (aMinute > "5") {
         aMinute = "0" + aMinute
       }
+      if let h = Int(aHour), h <= 23 {
+        // do nothing
+      }
+      else {
+        aHour = "23"
+      }
       dateString = dateString.replacingOccurrences(of: "mm", with: aMinute)
       dateString = dateString.replacingOccurrences(of: "HH", with: aHour)
       dateString = dateString.replacingOccurrences(of: "$", with: separator)
