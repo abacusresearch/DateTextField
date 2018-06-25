@@ -168,8 +168,16 @@ extension DateTextField: UITextFieldDelegate {
     dateString = dateString.replacingOccurrences(of: "yyyy", with: year)
     
     if day.count >= 2 {
-      dateString = dateString.replacingOccurrences(of: "dd", with: aDay)
-      dateString = dateString.replacingOccurrences(of: "*", with: separator)
+      if let x = Int(day), x <= 31 {
+        dateString = dateString.replacingOccurrences(of: "dd", with: aDay)
+        dateString = dateString.replacingOccurrences(of: "*", with: separator)
+      }
+      else {
+        let index = aDay.index(aDay.startIndex, offsetBy: 1)
+        let substring = aDay[index]
+        dateString = dateString.replacingOccurrences(of: "dd", with: String(substring))
+        dateString = dateString.replacingOccurrences(of: "*", with: "")
+      }
     } else {
       if (aDay > "3") {
         aDay = "0" + aDay
@@ -193,8 +201,16 @@ extension DateTextField: UITextFieldDelegate {
     }
     
     if aMonth.count >= 2 {
-      dateString = dateString.replacingOccurrences(of: "MM", with: aMonth)
-      dateString = dateString.replacingOccurrences(of: "$", with: separator)
+      if let x = Int(month), x <= 12 {
+        dateString = dateString.replacingOccurrences(of: "MM", with: aMonth)
+        dateString = dateString.replacingOccurrences(of: "$", with: separator)
+      }
+      else {
+        let index = aMonth.index(before: aMonth.endIndex)
+        let substring = aMonth[index]
+        dateString = dateString.replacingOccurrences(of: "MM", with: String(substring))
+        dateString = dateString.replacingOccurrences(of: "$", with: "")
+      }
     } else {
       if (aMonth > "1") {
         aMonth = "0" + aMonth
@@ -308,7 +324,7 @@ public class HourTextField: DateTextField {
       return Format.hourMinute
     }
     set {
-      
+       // do nothing
     }
   }
 
