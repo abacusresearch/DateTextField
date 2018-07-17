@@ -243,7 +243,7 @@ extension DateTextField: UITextFieldDelegate {
     var aForce = force
 
     if aHour.count >= 2 {
-      if (aMinute > "5") {
+      if (aMinute > "5" && aMinute.count == 1) {
         aMinute = "0" + aMinute
       }
       if let h = Int(aHour), h <= 23 {
