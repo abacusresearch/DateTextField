@@ -13,6 +13,7 @@ protocol DateTextFieldDelegate: class {
   func dateDidChange(dateTextField: DateTextField)
 }
 
+@objcMembers
 public class DateTextField: UITextField {
   
   public enum Format: String {
