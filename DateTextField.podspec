@@ -52,6 +52,7 @@ Pod::Spec.new do |s|
   #  Specify a social_media_url where others can refer to, for example a twitter
   #  profile URL.
   #
+  s.swift_version = "4.2"
 
   s.author             = { "Roger Misteli" => "roger.misteli@abacus.ch" }
   # Or just: s.author    = "Roger Misteli"
